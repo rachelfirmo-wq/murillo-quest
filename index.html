@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Murillo Quest</title>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d0f1a;--surface:#141728;--surface2:#1c2035;--border:#252a45;
+  --text:#e8eaf6;--muted:#6b7399;
+  --xp:#ffd43b;--green:#69db7c;--blue:#4dabf7;--purple:#cc5de8;
+  --orange:#ffa94d;--teal:#38d9a9;--pink:#f783ac;--red:#ff6b6b;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:90px;
+  background-image:radial-gradient(ellipse at 15% 0%,rgba(77,171,247,.07) 0%,transparent 55%),
+                   radial-gradient(ellipse at 85% 100%,rgba(204,93,232,.06) 0%,transparent 55%);}
+
+/* LOGIN */
+#loginScreen{position:fixed;inset:0;background:var(--bg);z-index:9999;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:32px;}
+#loginScreen h1{font-family:'Bangers',cursive;font-size:2.8rem;color:var(--xp);letter-spacing:3px;
+  text-shadow:0 0 30px rgba(255,212,59,.5);}
+#loginScreen p{color:var(--muted);font-size:.85rem;font-weight:700;}
+.login-btn{width:100%;max-width:300px;padding:16px;border-radius:16px;border:none;
+  font-family:'Bangers',cursive;font-size:1.3rem;letter-spacing:2px;cursor:pointer;transition:all .2s;}
+.login-player{background:linear-gradient(135deg,#4dabf7,#cc5de8);color:#fff;box-shadow:0 8px 30px rgba(77,171,247,.35);}
+.login-player:hover{transform:scale(1.03);}
+.login-mom{background:linear-gradient(135deg,#ffa94d,#ff6b6b);color:#fff;box-shadow:0 8px 30px rgba(255,169,77,.35);}
+.login-mom:hover{transform:scale(1.03);}
+.login-sep{color:var(--muted);font-size:.72rem;font-weight:800;letter-spacing:2px;}
+
+/* HEADER */
+header{background:linear-gradient(180deg,#1a1e35 0%,#0d0f1a 100%);
+  border-bottom:2px solid var(--border);padding:13px 18px;position:sticky;top:0;z-index:200;}
+.hero{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.avatar{width:50px;height:50px;border-radius:14px;display:flex;align-items:center;justify-content:center;
+  font-size:1.6rem;flex-shrink:0;background:linear-gradient(135deg,#4dabf7,#cc5de8);
+  box-shadow:0 0 18px rgba(77,171,247,.4);animation:pulseA 3s ease-in-out infinite;}
+.avatar.mom-av{background:linear-gradient(135deg,#ffa94d,#ff6b6b);box-shadow:0 0 18px rgba(255,169,77,.4);}
+@keyframes pulseA{0%,100%{box-shadow:0 0 18px rgba(77,171,247,.4);}50%{box-shadow:0 0 28px rgba(204,93,232,.5);}}
+.hero-info h1{font-family:'Bangers',cursive;font-size:1.45rem;letter-spacing:2px;color:var(--xp);line-height:1;}
+.subtitle{font-size:.68rem;color:var(--muted);font-weight:700;letter-spacing:.8px;text-transform:uppercase;}
+.switch-btn{margin-left:auto;padding:6px 13px;border-radius:99px;border:1.5px solid var(--border);
+  background:transparent;color:var(--muted);font-size:.7rem;font-weight:800;cursor:pointer;
+  font-family:'Nunito',sans-serif;transition:all .2s;white-space:nowrap;}
+.switch-btn:hover{border-color:var(--orange);color:var(--orange);}
+.stats-row{display:flex;gap:7px;flex-wrap:wrap;align-items:center;}
+.stat-pill{display:flex;align-items:center;gap:5px;background:var(--surface2);
+  border:1px solid var(--border);border-radius:99px;padding:4px 10px;
+  font-size:.73rem;font-weight:800;font-family:'Space Mono',monospace;}
+.level-badge{background:linear-gradient(135deg,var(--xp),var(--orange));color:#000;
+  font-family:'Bangers',cursive;font-size:.88rem;letter-spacing:1px;padding:4px 10px;border-radius:8px;}
+.xp-bar-wrap{flex:1;min-width:120px;}
+.xp-bar-label{display:flex;justify-content:space-between;font-size:.63rem;color:var(--muted);
+  font-weight:700;margin-bottom:3px;font-family:'Space Mono',monospace;}
+.xp-bar{height:9px;background:var(--surface2);border-radius:99px;overflow:hidden;border:1px solid var(--border);}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(--xp),var(--orange));border-radius:99px;
+  transition:width .7s cubic-bezier(.34,1.56,.64,1);box-shadow:0 0 10px rgba(255,212,59,.5);}
+
+/* WORLD BANNER */
+#worldBanner{padding:10px 16px 0;}
+.world-banner{border-radius:14px;padding:13px 16px;border:2px solid;position:relative;overflow:hidden;}
+.world-banner::before{content:'';position:absolute;inset:0;opacity:.07;
+  background:repeating-linear-gradient(45deg,#fff 0,#fff 1px,transparent 1px,transparent 8px);}
+.world-banner h2{font-family:'Bangers',cursive;font-size:1.3rem;letter-spacing:2px;line-height:1;}
+.world-banner p{font-size:.72rem;font-weight:700;margin-top:3px;opacity:.8;}
+.wb-bar{margin-top:9px;height:7px;border-radius:99px;background:rgba(255,255,255,.15);overflow:hidden;}
+.wb-fill{height:100%;border-radius:99px;transition:width .8s ease;}
+.wb-label{display:flex;justify-content:space-between;font-size:.62rem;font-weight:800;
+  margin-top:3px;opacity:.7;font-family:'Space Mono',monospace;}
+
+/* TABS */
+.tabs{display:flex;gap:3px;padding:11px 16px 0;background:var(--surface);
+  border-bottom:2px solid var(--border);overflow-x:auto;}
+.tab{padding:7px 12px;border-radius:10px 10px 0 0;font-size:.74rem;font-weight:800;cursor:pointer;
+  white-space:nowrap;border:none;background:transparent;color:var(--muted);
+  border-bottom:3px solid transparent;transition:all .2s;font-family:'Nunito',sans-serif;}
+.tab:hover{color:var(--text);}
+.tab.active{color:var(--xp);border-bottom-color:var(--xp);background:rgba(255,212,59,.06);}
+
+main{padding:13px 15px;max-width:860px;margin:0 auto;}
+.section{display:none;}.section.active{display:block;}
+
+/* DATE GROUP */
+.dg-label{font-size:.65rem;font-weight:900;text-transform:uppercase;letter-spacing:2px;
+  color:var(--muted);margin:15px 0 7px;display:flex;align-items:center;gap:8px;}
+.dg-label::after{content:'';flex:1;height:1px;background:var(--border);}
+.dg-label.fire{color:var(--red);}.dg-label.soon{color:var(--orange);}
+.dg-label.ok{color:var(--green);}.dg-label.past{color:var(--muted);}
+
+/* TASK CARD */
+.task-card{background:var(--surface);border:1.5px solid var(--border);border-radius:15px;
+  margin-bottom:9px;overflow:hidden;transition:all .2s;position:relative;}
+.task-card:hover{border-color:#353c63;transform:translateY(-1px);}
+.task-card.done{opacity:.35;filter:grayscale(.5);}
+.task-card.fire-card{border-color:rgba(255,107,107,.5);box-shadow:0 0 15px rgba(255,107,107,.28);}
+.task-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;
+  border-radius:15px 0 0 15px;background:var(--accent,var(--blue));}
+.task-header{display:flex;align-items:center;gap:11px;padding:11px 13px 11px 17px;cursor:pointer;}
+.checkbox{width:27px;height:27px;border-radius:8px;border:2.5px solid var(--accent,var(--blue));
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;
+  transition:all .2s;font-size:.9rem;}
+.checkbox.checked{background:var(--accent,var(--blue));border-color:var(--accent,var(--blue));
+  animation:pop .3s cubic-bezier(.34,1.56,.64,1);}
+@keyframes pop{0%{transform:scale(.7);}100%{transform:scale(1);}}
+.task-info{flex:1;min-width:0;}
+.task-title{font-size:.88rem;font-weight:800;line-height:1.2;margin-bottom:4px;}
+.task-meta{display:flex;gap:5px;flex-wrap:wrap;align-items:center;}
+.badge{font-size:.62rem;font-weight:800;padding:2px 7px;border-radius:99px;
+  text-transform:uppercase;background:var(--accent-bg);color:var(--accent);}
+.date-chip{font-size:.63rem;font-weight:800;font-family:'Space Mono',monospace;padding:2px 6px;border-radius:6px;}
+.date-chip.fire{background:rgba(255,107,107,.15);color:var(--red);}
+.date-chip.soon{background:rgba(255,169,77,.15);color:var(--orange);}
+.date-chip.ok{background:rgba(105,219,124,.15);color:var(--green);}
+.date-chip.past{background:rgba(107,115,153,.15);color:var(--muted);}
+.time-b{font-size:.63rem;font-weight:700;color:var(--muted);font-family:'Space Mono',monospace;}
+.xp-b{font-size:.63rem;font-weight:800;color:var(--xp);font-family:'Space Mono',monospace;}
+.edit-date-btn{font-size:.59rem;font-weight:800;color:var(--muted);background:var(--surface2);
+  border:1px solid var(--border);border-radius:6px;padding:2px 6px;cursor:pointer;
+  font-family:'Nunito',sans-serif;transition:all .2s;}
+.edit-date-btn:hover{color:var(--blue);border-color:var(--blue);}
+.expand-icon{color:var(--muted);font-size:.75rem;transition:transform .25s;flex-shrink:0;}
+.task-card.open .expand-icon{transform:rotate(180deg);}
+
+.task-body{display:none;padding:0 13px 13px 17px;border-top:1px solid var(--border);
+  animation:fadeSlide .2s ease;}
+.task-card.open .task-body{display:block;padding-top:11px;}
+@keyframes fadeSlide{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:translateY(0);}}
+.body-label{font-size:.61rem;font-weight:900;text-transform:uppercase;letter-spacing:1.5px;
+  color:var(--muted);margin:9px 0 5px;}
+.body-label:first-child{margin-top:0;}
+.body-text{font-size:.8rem;color:var(--text);line-height:1.6;font-weight:600;}
+.step-list{list-style:none;display:flex;flex-direction:column;gap:5px;}
+.step-item{display:flex;gap:7px;align-items:flex-start;font-size:.8rem;font-weight:600;line-height:1.4;}
+.step-num{width:19px;height:19px;border-radius:6px;background:var(--accent-bg);color:var(--accent);
+  display:flex;align-items:center;justify-content:center;font-size:.64rem;font-weight:900;
+  flex-shrink:0;font-family:'Space Mono',monospace;margin-top:1px;}
+.turbo-btn{margin-top:11px;display:inline-flex;align-items:center;gap:7px;
+  background:linear-gradient(135deg,rgba(77,171,247,.15),rgba(204,93,232,.12));
+  border:1.5px solid rgba(77,171,247,.35);border-radius:11px;padding:8px 14px;
+  font-size:.78rem;font-weight:800;color:var(--blue);cursor:pointer;
+  transition:all .2s;font-family:'Nunito',sans-serif;}
+.turbo-btn:hover{background:linear-gradient(135deg,rgba(77,171,247,.25),rgba(204,93,232,.2));
+  border-color:rgba(77,171,247,.6);transform:scale(1.02);}
+
+/* ALERT POPUP */
+.alert-popup{position:fixed;top:0;left:0;right:0;z-index:8000;
+  background:linear-gradient(135deg,rgba(255,107,107,.97),rgba(255,169,77,.97));
+  padding:14px 18px;display:flex;align-items:center;gap:12px;
+  box-shadow:0 4px 28px rgba(255,107,107,.5);animation:slideDown .4s cubic-bezier(.34,1.56,.64,1);}
+@keyframes slideDown{from{transform:translateY(-100%);}to{transform:translateY(0);}}
+.apop-icon{font-size:1.7rem;flex-shrink:0;}
+.apop-body{flex:1;}
+.apop-body h3{font-family:'Bangers',cursive;font-size:1.05rem;letter-spacing:1px;color:#fff;}
+.apop-body p{font-size:.75rem;color:rgba(255,255,255,.9);font-weight:700;margin-top:1px;}
+.apop-close{background:rgba(255,255,255,.25);border:none;border-radius:8px;padding:6px 11px;
+  color:#fff;font-weight:800;font-size:.78rem;cursor:pointer;font-family:'Nunito',sans-serif;}
+
+/* MODALS */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.82);
+  display:flex;align-items:center;justify-content:center;z-index:5000;padding:20px;
+  animation:fadeIn .2s ease;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.modal{background:var(--surface);border:2px solid var(--border);border-radius:22px;
+  padding:24px 20px;max-width:320px;width:100%;text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,.5);}
+.modal h2{font-family:'Bangers',cursive;font-size:1.8rem;letter-spacing:2px;color:var(--xp);margin-bottom:2px;}
+.mode-label{font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:13px;}
+.mode-label.turbo{color:var(--blue);}.mode-label.recharge{color:var(--green);}
+
+.timer-ring{width:148px;height:148px;margin:0 auto 13px;position:relative;}
+.timer-ring svg{transform:rotate(-90deg);}
+.ring-bg{fill:none;stroke:var(--surface2);stroke-width:9;}
+.ring-fill{fill:none;stroke-width:9;stroke-linecap:round;transition:stroke-dashoffset 1s linear;}
+.ring-fill.turbo{stroke:var(--blue);filter:drop-shadow(0 0 6px rgba(77,171,247,.6));}
+.ring-fill.recharge{stroke:var(--green);filter:drop-shadow(0 0 6px rgba(105,219,124,.6));}
+.timer-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.timer-time{font-family:'Bangers',cursive;font-size:2.1rem;letter-spacing:3px;line-height:1;}
+.timer-sub{font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--muted);}
+
+.pomo-blocks{display:flex;gap:5px;justify-content:center;margin-bottom:12px;flex-wrap:wrap;}
+.pomo-block{width:20px;height:7px;border-radius:99px;background:var(--surface2);
+  border:1px solid var(--border);transition:all .3s;}
+.pomo-block.turbo-done{background:var(--blue);border-color:var(--blue);}
+.pomo-block.rest-done{background:var(--green);border-color:var(--green);}
+
+.phase-info{font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:12px;line-height:1.5;}
+.phase-info strong{color:var(--text);}
+.reward-msg{font-size:.78rem;font-weight:700;color:var(--green);margin-top:5px;min-height:16px;}
+.pomo-controls{display:flex;gap:7px;justify-content:center;}
+.pomo-ctrl{padding:9px 18px;border-radius:11px;border:none;font-family:'Nunito',sans-serif;
+  font-size:.81rem;font-weight:800;cursor:pointer;transition:all .2s;}
+.pomo-start{background:var(--blue);color:#000;}
+.pomo-start:hover{opacity:.85;transform:scale(1.03);}
+.pomo-skip{background:var(--surface2);color:var(--muted);border:1px solid var(--border);}
+.pomo-skip:hover{color:var(--text);}
+.pomo-close{background:transparent;color:var(--muted);font-size:.7rem;margin-top:9px;
+  border:none;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:800;}
+
+/* EDIT DATE MODAL */
+.edit-modal{max-width:290px;}
+.edit-modal h3{font-family:'Bangers',cursive;font-size:1.35rem;letter-spacing:1px;color:var(--xp);margin-bottom:3px;}
+.edit-modal p{font-size:.76rem;color:var(--muted);font-weight:700;margin-bottom:13px;}
+.date-input{width:100%;padding:10px 13px;border-radius:11px;border:2px solid var(--border);
+  background:var(--surface2);color:var(--text);font-family:'Space Mono',monospace;
+  font-size:.88rem;font-weight:700;outline:none;transition:border-color .2s;}
+.date-input:focus{border-color:var(--blue);}
+.edit-actions{display:flex;gap:7px;margin-top:13px;}
+.edit-save{flex:1;padding:9px;border-radius:11px;border:none;background:var(--blue);color:#000;
+  font-weight:800;font-size:.83rem;cursor:pointer;font-family:'Nunito',sans-serif;}
+.edit-cancel{flex:1;padding:9px;border-radius:11px;border:1px solid var(--border);
+  background:transparent;color:var(--muted);font-weight:800;font-size:.83rem;
+  cursor:pointer;font-family:'Nunito',sans-serif;}
+
+/* WORLDS */
+.world-section{margin-bottom:26px;}
+.world-header{border-radius:15px;padding:15px 16px;border:2px solid;margin-bottom:12px;position:relative;overflow:hidden;}
+.world-header::before{content:'';position:absolute;inset:0;opacity:.06;
+  background:repeating-linear-gradient(45deg,#fff 0,#fff 1px,transparent 1px,transparent 8px);}
+.world-header h3{font-family:'Bangers',cursive;font-size:1.4rem;letter-spacing:2px;}
+.wh-sub{font-size:.7rem;font-weight:700;margin-top:3px;opacity:.75;}
+.wh-prize{margin-top:9px;font-size:.78rem;font-weight:800;background:rgba(255,255,255,.12);
+  border-radius:8px;padding:6px 10px;display:inline-block;}
+.wh-bar{margin-top:9px;height:7px;border-radius:99px;background:rgba(255,255,255,.15);overflow:hidden;}
+.wh-fill{height:100%;border-radius:99px;transition:width .8s ease;}
+.wh-label{display:flex;justify-content:space-between;font-size:.61rem;
+  font-weight:800;margin-top:3px;opacity:.7;font-family:'Space Mono',monospace;}
+.trail{display:flex;flex-direction:column;position:relative;padding-left:36px;}
+.trail::before{content:'';position:absolute;left:14px;top:0;bottom:0;width:3px;
+  background:linear-gradient(180deg,var(--xp) 0%,var(--border) 100%);border-radius:99px;}
+.trail-node{position:relative;margin-bottom:9px;}
+.trail-dot{position:absolute;left:-28px;top:8px;width:20px;height:20px;border-radius:50%;
+  background:var(--surface2);border:3px solid var(--border);
+  display:flex;align-items:center;justify-content:center;font-size:.66rem;transition:all .3s;}
+.trail-dot.done{background:var(--xp);border-color:var(--xp);box-shadow:0 0 10px rgba(255,212,59,.5);}
+.trail-dot.done::after{content:'✓';font-size:.68rem;font-weight:900;color:#000;}
+.trail-card{background:var(--surface);border:1.5px solid var(--border);border-radius:11px;padding:9px 13px;}
+.trail-card.done{opacity:.5;border-color:rgba(255,212,59,.2);}
+.trail-card h4{font-size:.8rem;font-weight:800;margin-bottom:2px;}
+.tc-meta{font-size:.66rem;color:var(--muted);font-weight:700;}
+
+/* REWARDS */
+.reward-title{font-family:'Bangers',cursive;font-size:1.3rem;letter-spacing:2px;color:var(--xp);margin-bottom:3px;}
+.reward-sub{font-size:.73rem;color:var(--muted);font-weight:700;margin-bottom:18px;}
+.reward-cards{display:flex;flex-direction:column;gap:11px;}
+.reward-card{border-radius:15px;padding:17px;border:2px solid;position:relative;overflow:hidden;}
+.reward-card::before{content:'';position:absolute;inset:0;opacity:.07;
+  background:repeating-linear-gradient(45deg,#fff 0,#fff 1px,transparent 1px,transparent 8px);}
+.rc-icon{font-size:1.9rem;margin-bottom:5px;}
+.reward-card h3{font-family:'Bangers',cursive;font-size:1.15rem;letter-spacing:1px;margin-bottom:2px;}
+.rc-req{font-size:.72rem;font-weight:700;opacity:.75;margin-bottom:7px;}
+.rc-prize{font-size:.88rem;font-weight:800;}
+.rc-bar-wrap{margin-top:11px;}
+.rc-bar{height:7px;border-radius:99px;background:rgba(255,255,255,.15);overflow:hidden;}
+.rc-fill{height:100%;border-radius:99px;transition:width .8s ease;}
+.rc-label{display:flex;justify-content:space-between;font-size:.61rem;
+  font-weight:800;margin-top:3px;opacity:.7;font-family:'Space Mono',monospace;}
+.reward-card.unlocked{animation:rwGlow 2s ease-in-out infinite;}
+@keyframes rwGlow{0%,100%{box-shadow:0 0 10px rgba(255,212,59,.25);}50%{box-shadow:0 0 24px rgba(255,212,59,.65);}}
+
+/* RULES */
+.rules-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:9px;}
+.rule-card{background:var(--surface);border:1.5px solid var(--border);border-radius:13px;padding:13px;}
+.ri{font-size:1.3rem;margin-bottom:5px;}
+.rule-card h3{font-size:.83rem;font-weight:800;margin-bottom:3px;}
+.rule-card p{font-size:.77rem;color:var(--muted);line-height:1.5;font-weight:600;}
+.rule-card strong{color:var(--text);}
+.rules-sec-title{font-family:'Bangers',cursive;font-size:1.15rem;letter-spacing:1px;
+  color:var(--xp);margin:16px 0 9px;}
+
+/* MOM */
+.mom-view{padding:13px 15px;max-width:860px;margin:0 auto;}
+.mom-hdr{background:linear-gradient(135deg,rgba(255,169,77,.15),rgba(255,107,107,.1));
+  border:1.5px solid rgba(255,169,77,.3);border-radius:15px;padding:13px 16px;
+  margin-bottom:16px;display:flex;align-items:center;gap:11px;}
+.mom-hdr .mhi{font-size:1.7rem;}
+.mom-hdr h2{font-family:'Bangers',cursive;font-size:1.25rem;letter-spacing:1px;color:var(--orange);}
+.mom-hdr p{font-size:.72rem;color:var(--muted);font-weight:700;}
+.mom-overview{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:9px;margin-bottom:15px;}
+.mom-stat{background:var(--surface);border:1.5px solid var(--border);border-radius:13px;padding:13px;text-align:center;}
+.ms-num{font-family:'Bangers',cursive;font-size:1.9rem;letter-spacing:1px;}
+.ms-label{font-size:.65rem;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.8px;}
+.mom-sec{font-size:.66rem;font-weight:900;text-transform:uppercase;letter-spacing:2px;
+  color:var(--muted);margin:13px 0 7px;display:flex;align-items:center;gap:8px;}
+.mom-sec::after{content:'';flex:1;height:1px;background:var(--border);}
+.mom-row{background:var(--surface);border:1.5px solid var(--border);border-radius:11px;
+  padding:9px 13px;margin-bottom:7px;display:flex;align-items:center;gap:9px;}
+.mom-row.done{opacity:.38;filter:grayscale(.4);}
+.mom-row.fire-row{border-color:rgba(255,107,107,.38);}
+.mdot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.mom-ti{flex:1;}
+.mom-tt{font-size:.8rem;font-weight:800;}
+.mom-tm{font-size:.66rem;color:var(--muted);font-weight:700;}
+.mom-status{font-size:.65rem;font-weight:800;padding:3px 8px;border-radius:99px;}
+.ms-done{background:rgba(105,219,124,.15);color:var(--green);}
+.ms-pend{background:rgba(107,115,153,.15);color:var(--muted);}
+.ms-fire{background:rgba(255,107,107,.15);color:var(--red);}
+
+/* TOAST */
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);
+  background:var(--surface);border:2px solid var(--xp);border-radius:15px;
+  padding:10px 18px;font-size:.84rem;font-weight:800;color:var(--xp);white-space:nowrap;z-index:7000;
+  animation:toastIn .4s cubic-bezier(.34,1.56,.64,1);
+  box-shadow:0 8px 28px rgba(0,0,0,.4),0 0 16px rgba(255,212,59,.3);}
+@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(18px) scale(.9);}
+  to{opacity:1;transform:translateX(-50%) translateY(0) scale(1);}}
+
+/* LEVEL UP */
+.levelup-ov{position:fixed;inset:0;background:rgba(0,0,0,.88);
+  display:flex;align-items:center;justify-content:center;z-index:9000;animation:fadeIn .3s ease;}
+.levelup-box{text-align:center;padding:38px;animation:lvlPop .5s cubic-bezier(.34,1.56,.64,1);}
+@keyframes lvlPop{from{transform:scale(.5);opacity:0;}to{transform:scale(1);opacity:1;}}
+.levelup-box h1{font-family:'Bangers',cursive;font-size:3rem;color:var(--xp);letter-spacing:4px;
+  animation:glowT 1s ease-in-out infinite alternate;}
+@keyframes glowT{from{text-shadow:0 0 20px rgba(255,212,59,.5);}to{text-shadow:0 0 55px rgba(255,212,59,1),0 0 85px rgba(255,169,77,.6);}}
+.levelup-box .stars{font-size:2rem;margin:8px 0;}
+.levelup-box .lv-name{font-family:'Bangers',cursive;font-size:1.5rem;color:var(--xp);letter-spacing:2px;}
+.lv-dismiss{margin-top:20px;padding:11px 30px;background:var(--xp);color:#000;
+  border:none;border-radius:11px;font-family:'Nunito',sans-serif;font-size:.88rem;
+  font-weight:900;cursor:pointer;transition:transform .2s;}
+.lv-dismiss:hover{transform:scale(1.05);}
+
+.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--green);
+  display:inline-block;margin-right:5px;animation:blink 2s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.25;}}
+
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px;}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div style="font-size:3rem">⚔️</div>
+  <h1>MURILLO QUEST</h1>
+  <p>Quem está acessando?</p>
+  <button class="login-btn login-player" onclick="setMode('player')">🎮 SOU O MURILLO</button>
+  <div class="login-sep">— ou —</div>
+  <button class="login-btn login-mom" onclick="setMode('mom')">👩 SOU A MÃE</button>
+</div>
+
+<div id="alertContainer"></div>
+
+<!-- TURBO MODAL -->
+<div class="modal-overlay" id="turboModal" style="display:none">
+  <div class="modal">
+    <h2>⚡ TURBO MODE</h2>
+    <div class="mode-label turbo" id="modeLabel">FOCO ATIVADO</div>
+    <div class="timer-ring">
+      <svg width="148" height="148" viewBox="0 0 148 148">
+        <circle class="ring-bg" cx="74" cy="74" r="63"/>
+        <circle class="ring-fill turbo" id="ringFill" cx="74" cy="74" r="63"
+          stroke-dasharray="396" stroke-dashoffset="0"/>
+      </svg>
+      <div class="timer-center">
+        <div class="timer-time" id="timerDisplay">30:00</div>
+        <div class="timer-sub" id="timerSub">TURBO</div>
+      </div>
+    </div>
+    <div class="pomo-blocks" id="pomoBlocks"></div>
+    <div class="phase-info" id="phaseInfo"></div>
+    <div class="reward-msg" id="rewardMsg"></div>
+    <div class="pomo-controls">
+      <button class="pomo-ctrl pomo-start" id="startBtn" onclick="toggleTimer()">▶ INICIAR</button>
+      <button class="pomo-ctrl pomo-skip" onclick="skipPhase()">⏭ Pular</button>
+    </div><br>
+    <button class="pomo-ctrl pomo-close" onclick="closeModal()">✕ Fechar</button>
+  </div>
+</div>
+
+<!-- EDIT DATE MODAL -->
+<div class="modal-overlay" id="editModal" style="display:none">
+  <div class="modal edit-modal">
+    <h3>📅 Alterar data</h3>
+    <p id="editTitle" style="color:var(--muted);font-size:.75rem;font-weight:700;margin-bottom:12px"></p>
+    <input type="date" class="date-input" id="editDateInput">
+    <div class="edit-actions">
+      <button class="edit-save" onclick="saveEditDate()">Salvar</button>
+      <button class="edit-cancel" onclick="closeEditModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- PLAYER VIEW -->
+<div id="playerView" style="display:none">
+  <header>
+    <div class="hero">
+      <div class="avatar">⚔️</div>
+      <div class="hero-info">
+        <h1>MURILLO QUEST</h1>
+        <div class="subtitle"><span class="sync-dot"></span>2º Bimestre · Colégio Adventista</div>
+      </div>
+      <button class="switch-btn" onclick="setMode('mom')">👩 Visão da mãe</button>
+    </div>
+    <div class="stats-row">
+      <div class="stat-pill">⭐ <span id="xpDisplay">0 XP</span></div>
+      <div class="level-badge" id="levelDisplay">LVL 1</div>
+      <div class="stat-pill">🏆 <span id="doneDisplay">0 missões</span></div>
+      <div class="xp-bar-wrap">
+        <div class="xp-bar-label"><span>Próximo nível</span><span id="xpPct">0%</span></div>
+        <div class="xp-bar"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
+      </div>
+    </div>
+  </header>
+  <div id="worldBanner"></div>
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('provas',this)">🔥 Provas</button>
+    <button class="tab" onclick="showTab('trabalhos',this)">📝 Trabalhos</button>
+    <button class="tab" onclick="showTab('diario',this)">📋 Diário</button>
+    <button class="tab" onclick="showTab('trilha',this)">🗺️ Trilha</button>
+    <button class="tab" onclick="showTab('recompensas',this)">🎁 Recompensas</button>
+    <button class="tab" onclick="showTab('regras',this)">📌 Regras</button>
+  </div>
+  <main>
+    <div class="section active" id="tab-provas"><div id="list-provas"></div></div>
+    <div class="section" id="tab-trabalhos"><div id="list-trabalhos"></div></div>
+    <div class="section" id="tab-diario"><div id="list-diario"></div></div>
+    <div class="section" id="tab-trilha"><div id="worldsContainer"></div></div>
+    <div class="section" id="tab-recompensas"><div id="rewardsContainer"></div></div>
+    <div class="section" id="tab-regras"><div id="rulesContainer"></div></div>
+  </main>
+</div>
+
+<!-- MOM VIEW -->
+<div id="momView" style="display:none">
+  <header>
+    <div class="hero">
+      <div class="avatar mom-av">👩</div>
+      <div class="hero-info">
+        <h1 style="color:var(--orange)">PAINEL DA MÃE</h1>
+        <div class="subtitle"><span class="sync-dot"></span>Acompanhamento em tempo real</div>
+      </div>
+      <button class="switch-btn" onclick="setMode('player')">🎮 Visão do Murillo</button>
+    </div>
+  </header>
+  <div class="mom-view" id="momContent"></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const app = initializeApp({
+  apiKey:"AIzaSyCMvGsNen73dNft2wZ-8yKDjvPu-BI1o3w",
+  authDomain:"murillo-quest.firebaseapp.com",
+  databaseURL:"https://murillo-quest-default-rtdb.firebaseio.com",
+  projectId:"murillo-quest",
+  storageBucket:"murillo-quest.firebasestorage.app",
+  messagingSenderId:"949614857729",
+  appId:"1:949614857729:web:fa657c8770374cb4b3ba00"
+});
+const db=getDatabase(app);
+const ROOT=ref(db,'murillo');
+
+// ── TASKS ──────────────────────────────────────
+const TODAY=new Date('2025-05-17');
+const ACCENT={
+  'Gramática':{c:'#4dabf7',bg:'rgba(77,171,247,.13)'},
+  'Literatura':{c:'#cc5de8',bg:'rgba(204,93,232,.13)'},
+  'Argumentação':{c:'#f783ac',bg:'rgba(247,131,172,.13)'},
+  'Matemática':{c:'#ffd43b',bg:'rgba(255,212,59,.13)'},
+  'História':{c:'#ffa94d',bg:'rgba(255,169,77,.13)'},
+  'Geografia':{c:'#38d9a9',bg:'rgba(56,217,169,.13)'},
+  'Biologia':{c:'#69db7c',bg:'rgba(105,219,124,.13)'},
+  'Química':{c:'#ff6b6b',bg:'rgba(255,107,107,.13)'},
+  'Física':{c:'#4dabf7',bg:'rgba(77,171,247,.13)'},
+  'Inglês':{c:'#f783ac',bg:'rgba(247,131,172,.13)'},
+  'Arte':{c:'#cc5de8',bg:'rgba(204,93,232,.13)'},
+  'Ens. Religioso':{c:'#38d9a9',bg:'rgba(56,217,169,.13)'},
+  'Eletiva':{c:'#ffa94d',bg:'rgba(255,169,77,.13)'},
+  'Debates':{c:'#69db7c',bg:'rgba(105,219,124,.13)'},
+  'Proj. de Vida':{c:'#f783ac',bg:'rgba(247,131,172,.13)'},
+};
+const ac=d=>ACCENT[d]||{c:'#4dabf7',bg:'rgba(77,171,247,.13)'};
+
+const TASKS={
+  provas:[
+    {id:'p1',disc:'Argumentação',titulo:'Redação — Estilo ENEM',data:'2025-05-25',mins:90,xp:80,
+     conteudo:'Redação dissertativa com as competências do ENEM.',
+     passos:['Estrutura: Introdução → 2 argumentos → Conclusão com proposta de intervenção',
+             'Escolher um tema polêmico atual para treinar','Cuidar de ortografia e pontuação',
+             'Dica: dite em voz alta antes de escrever se travar'],
+     formato:'Redação dissertativa · Competências do ENEM'},
+    {id:'p2',disc:'Gramática',titulo:'Prova de Gramática (PR1)',data:'2025-05-27',mins:60,xp:80,
+     conteudo:'Verbos, Flexão dos Substantivos, Interpretação e Intertextualidade.',
+     passos:['Revisar tipos e conjugações de verbos','Estudar flexão de gênero e número dos substantivos',
+             'Treinar interpretação: ler e marcar o que o texto diz explicitamente',
+             'Intertextualidade = quando um texto cita ou imita outro'],
+     formato:'10 questões · 3 interpretação · 7 gramática · Sem consulta'},
+    {id:'p3',disc:'Química',titulo:'Prova de Química (PR1)',data:'2025-05-28',mins:60,xp:80,
+     conteudo:'Tabela Periódica + Interações Atômicas.',
+     passos:['Tabela periódica: famílias, períodos, metais x não-metais',
+             'Ligações iônicas: metais + não-metais','Ligações covalentes: não-metais + não-metais',
+             'Revisar atividade online AT1'],
+     formato:'10 questões · Sem consulta'},
+    {id:'p4',disc:'Inglês',titulo:'Prova de Inglês (PR1)',data:'2025-05-28',mins:45,xp:80,
+     conteudo:'Apostila 1 — Módulos 1 e 2 · Interpretação de texto.',
+     passos:['Rever vocabulário dos módulos 1 e 2','Treinar interpretação: marcar palavras-chave',
+             'Para palavras desconhecidas: usar contexto da frase','Revisar exercícios de aula'],
+     formato:'Questões objetivas e/ou dissertativas'},
+    {id:'p5',disc:'Literatura',titulo:'Prova de Literatura (PR2)',data:'2025-05-28',mins:60,xp:80,
+     conteudo:'Quinhentismo — literatura do século XVI.',
+     passos:['Quinhentismo = literatura entre 1500 e 1600',
+             'Principais textos: Carta de Pero Vaz de Caminha',
+             'Características: linguagem arcaica, temas religiosos e de viagem',
+             'Rever anotações do caderno'],
+     formato:'10 questões · Sem consulta · Individual'},
+    {id:'p6',disc:'Física',titulo:'Prova de Física (PR1)',data:'2025-05-29',mins:75,xp:80,
+     conteudo:'Composição dos Movimentos e Movimento Circular.',
+     passos:['Composição: dois movimentos simultâneos geram um resultante',
+             'Movimento circular: velocidade angular, período, frequência',
+             'Resolver exercícios dos módulos 1 e 2 da Apostila 2',
+             'Pedir ajuda ao professor nas questões que travar'],
+     formato:'Resolução de exercícios'},
+    {id:'p7',disc:'Geografia',titulo:'Prova de Geografia (PR1)',data:'2025-05-29',mins:60,xp:80,
+     conteudo:'Geomorfologia, Climatologia e Vegetação — Módulos 1, 2 e 3.',
+     passos:['Geomorfologia = formas do relevo','Climatologia = tipos de clima e causas',
+             'Vegetação = quais tipos existem em cada clima',
+             'Caderno É OBRIGATÓRIO — anotações são parte da prova'],
+     formato:'Questões variadas · Anotações do caderno essenciais'},
+    {id:'p8',disc:'Matemática',titulo:'Prova de Matemática (PR2)',data:'2025-06-01',mins:75,xp:50,
+     conteudo:'Sequência e Progressão Aritmética (PA) — Módulo 3.',
+     passos:['PA = sequência com diferença constante entre os termos',
+             'Fórmula do termo: an = a1 + (n–1)·r','Fórmula da soma: Sn = n·(a1+an)/2',
+             'Resolver ao menos 5 exercícios do módulo'],
+     formato:'10 questões · 40% dissertativas · 60% objetivas · Colocar resolução'},
+    {id:'p9',disc:'Arte',titulo:'Prova de Arte (PR1)',data:'2025-06-01',mins:45,xp:50,
+     conteudo:'Desenho e leitura de imagem — ícones visuais, texto visual.',
+     passos:['Leitura de imagem: o que vejo? O que o artista quis dizer?',
+             'Ícones visuais: símbolos que representam ideias',
+             'Texto visual: imagem que comunica como texto','Revisar materiais das aulas'],
+     formato:'Questões sobre o conteúdo das aulas'},
+    {id:'p10',disc:'História',titulo:'Prova de História (PR1)',data:'2025-06-02',mins:60,xp:50,
+     conteudo:'Regime Senhorial na Europa — Feudalismo (Módulo 3).',
+     passos:['Feudalismo = sistema da Idade Média com senhores e servos',
+             'Estrutura: Rei → Nobres → Cavaleiros → Servos',
+             'Temas: propriedade da terra, trabalho, poder da Igreja',
+             'Rever anotações do caderno'],
+     formato:'10 questões · 6 múltipla escolha · 4 discursivas'},
+    {id:'p11',disc:'Biologia',titulo:'Prova de Biologia (PR1)',data:'2025-06-03',mins:60,xp:50,
+     conteudo:'Estrutura química dos seres vivos + Citologia.',
+     passos:['Estrutura química: proteínas, carboidratos, lipídios, ácidos nucleicos',
+             'Citologia: célula, tipos (eucarionte x procarionte)',
+             'Métodos de estudo: microscópio, culturas de célula',
+             'Fazer mapa mental dos tópicos'],
+     formato:'10 questões objetivas/discursivas · Caneta azul ou preta'},
+  ],
+  trabalhos:[
+    {id:'t1',disc:'Arte',titulo:'Criar imagem com IA (TB1)',data:'2025-04-27',mins:20,xp:20,
+     conteudo:'Criar imagem a partir de descrição de quarto usando IA.',
+     passos:['⚠️ VERIFICAR com o professor se ainda aceita (entrega atrasada = –20%)',
+             'Usar ferramenta de IA (ex: Bing Image Creator, Canva IA)',
+             'Descrever o quarto com detalhes: cores, móveis, estilo','Salvar e entregar'],
+     formato:'Imagem gerada com IA · Individual'},
+    {id:'t2',disc:'Debates',titulo:'Debate da Turma (TB1)',data:'2025-04-28',mins:30,xp:20,
+     conteudo:'Ficha 8 — Empreendedorismo e debates contemporâneos.',
+     passos:['⚠️ VERIFICAR com o professor se ainda pode participar',
+             'Contribuição com organização no grupo conta 3 pts',
+             'Contribuição com ideias conta 2 pts','Presença conta 2 pts'],
+     formato:'Debate em grupo'},
+    {id:'t3',disc:'História',titulo:'Civilizações Medievais (TB1)',data:'2025-05-04',mins:45,xp:20,
+     conteudo:'Bárbaros, Bizantinos e Islâmicos — organizado em tópicos.',
+     passos:['⚠️ VERIFICAR com o professor sobre o prazo',
+             'Tópicos: aspectos geográficos, sociais, políticos/econômicos, religiosos, legados',
+             'Mínimo 5 itens por tópico','Formato de lista facilita a escrita'],
+     formato:'Tópicos · Mínimo 5 itens cada'},
+    {id:'t4',disc:'Geografia',titulo:'Hemeroteca — Clima (TB1)',data:'2025-04-29',mins:90,xp:20,
+     conteudo:'Trabalho com reportagem sobre clima — formato ABNT.',
+     passos:['⚠️ URGENTE: verificar com o professor se ainda aceita',
+             'Encontrar reportagem sobre CLIMA em jornal ou site',
+             'Copiar a reportagem na íntegra','Destacar 7 palavras desconhecidas + significados',
+             '1 frase com cada palavra','Resumo de 20 linhas','Comentário crítico (20 linhas)',
+             'Escrever à mão em papel almaço + capa'],
+     formato:'Manuscrito · Papel almaço · Com capa'},
+    {id:'t5',disc:'Arte',titulo:'Texto visual em dupla (TB2)',data:'2025-05-11',mins:60,xp:20,
+     conteudo:'Criar imagem artística em papel Canson A3.',
+     passos:['⚠️ VERIFICAR com o professor sobre o prazo','Combinar com a dupla',
+             'Usar papel Canson A3 e diferentes materiais artísticos',
+             'Seguir orientações dos textos de estudo'],
+     formato:'Em dupla · Papel Canson A3'},
+    {id:'t6',disc:'Matemática',titulo:'Pesquisa de Estatística (TB1)',data:'2025-05-18',mins:120,xp:50,
+     conteudo:'Desempenho acadêmico vs tempo de lazer — pesquisa com alunos do colégio.',
+     passos:['Criar questionário: nome, idade, sexo, nota de matemática, tempo de lazer',
+             'Aplicar para colegas','Organizar respostas em tabela de distribuição',
+             'Calcular média, moda e mediana','Fazer ao menos 1 gráfico',
+             'Escrever conclusão','Fazer capa (conta 0,5 pt)'],
+     formato:'Pesquisa em grupo · Tabela + gráficos + medidas + conclusão + capa'},
+    {id:'t7',disc:'Ens. Religioso',titulo:'Pesquisa: Grupos no Tempo de Jesus (TB1)',data:'2025-05-05',mins:40,xp:20,
+     conteudo:'Fariseus, saduceus, zelotes e outros grupos da época de Jesus.',
+     passos:['⚠️ VERIFICAR com o professor sobre o prazo',
+             'Pesquisar os grupos com base na pág. 3 da apostila',
+             'Pode ser digitada — mas a CONCLUSÃO deve ser manuscrita',
+             'Fazer capa em folha sulfite: nome, série, título'],
+     formato:'Pesquisa · Conclusão manuscrita · Com capa'},
+    {id:'t8',disc:'Literatura',titulo:'Apresentação "A Viagem do Descobrimento" (TB1)',data:'2025-06-15',mins:60,xp:30,
+     conteudo:'Apresentar o livro de Eduardo Bueno sobre a expedição de Cabral.',
+     passos:['Combinar com o grupo quem apresenta o quê',
+             'Ler ou ouvir o resumo do livro','Treinar falar em voz alta — pode usar roteiro',
+             'Critérios: organização, expressão oral, participação, equipe, postura'],
+     formato:'Trabalho em grupo · Expressão oral'},
+    {id:'t9',disc:'Argumentação',titulo:'Podcast (TB1)',data:'2025-06-20',mins:90,xp:30,
+     conteudo:'Produzir podcast em dupla sobre tema de interesse.',
+     passos:['Escolher o tema com a dupla','Roteirizar: introdução, desenvolvimento, conclusão',
+             'Gravar com celular — clareza é mais importante que perfeição',
+             'Critérios: clareza, qualidade, fala, som, interação'],
+     formato:'Podcast em dupla · Gravação'},
+    {id:'t10',disc:'Ens. Religioso',titulo:'Seminário (durante o bimestre)',data:'2025-06-10',mins:50,xp:30,
+     conteudo:'Apresentação em PowerPoint sobre o tema do grupo.',
+     passos:['Combinar com o grupo qual é o tema','Cada aluno tem uma função',
+             'Fazer slides com imagens para apoiar a fala',
+             'Se faltar: entregar relatório escrito a mão'],
+     formato:'Apresentação em grupo · PowerPoint'},
+    {id:'t11',disc:'Eletiva',titulo:'Curso Criativos SEBRAE (TD1)',data:'2025-06-16',mins:120,xp:30,
+     conteudo:'Realizar o Curso Criativos na Plataforma SEBRAE.',
+     passos:['Acessar a Plataforma SEBRAE e buscar "Curso Criativos"',
+             'Completar o curso online no seu ritmo','Gerar e salvar o certificado',
+             'Entregar o certificado ao professor'],
+     formato:'Online · Certificado da plataforma SEBRAE'},
+    {id:'t12',disc:'Proj. de Vida',titulo:'Trabalho Bimestral — Módulo 2 (TB1)',data:'2025-06-02',mins:40,xp:50,
+     conteudo:'Atividades de pesquisa e/ou apresentação de Projeto de Vida.',
+     passos:['Verificar com o professor o formato exato',
+             'Material base: Módulo 2 "Encontros" — Fichas 5 a 8',
+             'Fazer as atividades das trilhas do livro didático'],
+     formato:'Pesquisa e/ou apresentação'},
+  ],
+  diario:[
+    {id:'d1',disc:'Física',titulo:'Lista MUV — Atividade Avaliativa',data:'2025-04-24',mins:40,xp:20,
+     conteudo:'Lista de exercícios sobre Movimento Uniformemente Variado.',
+     passos:['⚠️ VERIFICAR com o professor se ainda aceita','Resolver exercícios do Módulo 4 da Apostila 1'],
+     formato:'Lista de exercícios · MUV'},
+    {id:'d2',disc:'Química',titulo:'Maratona de Exercícios de Química (AT2)',data:'2025-05-25',mins:45,xp:80,
+     conteudo:'Questões sobre Tabela Periódica e Interações Atômicas.',
+     passos:['Pegar a lista de questões indicadas pelo professor',
+             'Resolver em folha separada da apostila de maratona',
+             'Mostrar a resolução em todas as questões','Entregar — 25/05'],
+     formato:'Folha à parte · Questões indicadas pelo professor'},
+    {id:'d3',disc:'Gramática',titulo:'Avaliação Semanal (AV1)',data:'2025-06-14',mins:15,xp:30,
+     conteudo:'Maratona semanal de gramática e literatura — em dupla.',
+     passos:['Estar presente nas aulas','Trabalhar em dupla para responder a questão sorteada','Foco: responder corretamente'],
+     formato:'Em dupla · Questão sorteada em aula'},
+    {id:'d4',disc:'Matemática',titulo:'Tarefas Diárias — Matemática (TD1)',data:'2025-06-17',mins:20,xp:20,
+     conteudo:'Atividades da apostila e caderno — com visto do professor.',
+     passos:['Fazer as atividades da apostila no prazo',
+             'Mostrar ao professor para receber o VISTO','Sem visto = não conta'],
+     formato:'Apostila e caderno · Com visto do professor'},
+    {id:'d5',disc:'Matemática',titulo:'Lista de Exercícios — Função Afim (TB2)',data:'2025-05-07',mins:30,xp:20,
+     conteudo:'5 questões objetivas sobre Função Afim — presencial em sala.',
+     passos:['⚠️ VERIFICAR com professor se ainda aceita',
+             'Resolver questões do Módulo 1, págs 2 a 22',
+             'Colocar a resolução em todas as questões'],
+     formato:'Lista presencial · 5 questões objetivas'},
+  ],
+};
+const allTasks=()=>[...TASKS.provas,...TASKS.trabalhos,...TASKS.diario];
+
+// ── STATE ──────────────────────────────────────
+let S={done:{},xp:0,customDates:{}};
+let mode=null;
+
+const LEVELS=[
+  {lvl:1,name:'Recruta',min:0},{lvl:2,name:'Guerreiro',min:150},
+  {lvl:3,name:'Mago',min:350},{lvl:4,name:'Cavaleiro',min:600},
+  {lvl:5,name:'Herói',min:900},{lvl:6,name:'Lenda',min:1200},
+];
+const curLvl=()=>{let l=LEVELS[0];for(const x of LEVELS){if(S.xp>=x.min)l=x;}return l;};
+const nxtLvl=()=>{const i=LEVELS.findIndex(l=>l.lvl===curLvl().lvl);return LEVELS[i+1]||null;};
+
+onValue(ROOT,snap=>{
+  const d=snap.val()||{};
+  S.done=d.done||{};S.xp=d.xp||0;S.customDates=d.customDates||{};
+  if(mode==='player'){fullRender();checkAlerts();}
+  if(mode==='mom') renderMom();
+});
+const push=p=>update(ROOT,p);
+
+// ── DATES ──────────────────────────────────────
+const effDate=t=>S.customDates[t.id]||t.data;
+const parseD=s=>{if(!s)return null;const m=s.match(/^(\d{4})-(\d{2})-(\d{2})$/);return m?new Date(+m[1],+m[2]-1,+m[3]):null;};
+const diff=t=>{const d=parseD(effDate(t));return d?Math.ceil((d-TODAY)/86400000):999;};
+const urg=d=>(d<0?'past':d<=3?'fire':d<=14?'soon':'ok');
+const urgLbl=(u,d)=>{
+  if(u==='past')return{cls:'past',text:`⚠️ Atrasado (${Math.abs(d)}d)`};
+  if(u==='fire')return{cls:'fire',text:d===0?'🔥 HOJE!':d===1?'🔥 Amanhã!':`🔥 Em ${d}d`};
+  if(u==='soon')return{cls:'soon',text:`📅 Em ${d}d`};
+  return{cls:'ok',text:'🟢 Sem urgência'};
+};
+const fmtD=iso=>{if(!iso)return'—';const m=iso.match(/(\d{4})-(\d{2})-(\d{2})/);return m?`${m[3]}/${m[2]}`:iso;};
+
+// ── ALERTS ──────────────────────────────────────
+function checkAlerts(){
+  if(mode!=='player')return;
+  const al=JSON.parse(sessionStorage.getItem('alerted')||'{}');
+  document.getElementById('alertContainer').innerHTML='';
+  allTasks().forEach(t=>{
+    if(S.done[t.id])return;
+    const d=diff(t);
+    if(d>=0&&d<=3&&!al[t.id]){
+      al[t.id]=true;sessionStorage.setItem('alerted',JSON.stringify(al));
+      const el=document.createElement('div');el.className='alert-popup';
+      el.innerHTML=`<div class="apop-icon">⚠️</div>
+        <div class="apop-body"><h3>${d===0?'HOJE é o prazo!':d===1?'AMANHÃ é o prazo!':`Faltam ${d} dias!`}</h3>
+        <p>${t.titulo} · ${t.disc}</p></div>
+        <button class="apop-close" onclick="this.closest('.alert-popup').remove()">OK</button>`;
+      document.getElementById('alertContainer').appendChild(el);
+      setTimeout(()=>{if(el.parentNode)el.remove();},8000);
+    }
+  });
+}
+
+// ── WORLDS ──────────────────────────────────────
+const WORLDS=[
+  {name:'MUNDO 1 — Floresta do Início',emoji:'🌲',color:'#69db7c',border:'rgba(105,219,124,.4)',startPct:0,endPct:25,
+   prize:'🍬 3 pacotes de Marshmallow',prizeInfo:'Ao completar 25% das missões'},
+  {name:'MUNDO 2 — Castelo do Meio',emoji:'🏰',color:'#4dabf7',border:'rgba(77,171,247,.4)',startPct:25,endPct:50,
+   prize:'🍔 Hambúrguer no Invictus',prizeInfo:'Ao completar 50% das missões'},
+  {name:'MUNDO 3 — Torre do Dragão',emoji:'🐉',color:'#cc5de8',border:'rgba(204,93,232,.4)',startPct:50,endPct:75,
+   prize:'🔥 Conquista especial',prizeInfo:'Ao completar 75% das missões'},
+  {name:'MUNDO FINAL — O Olimpo',emoji:'⚡',color:'#ffd43b',border:'rgba(255,212,59,.5)',startPct:75,endPct:100,
+   prize:'🎧 Fone JBL novo!',prizeInfo:'Ao completar 100% das missões'},
+];
+const totalPct=()=>{const a=allTasks();return Math.round(a.filter(t=>S.done[t.id]).length/a.length*100);};
+const curWorld=()=>{const p=totalPct();let w=WORLDS[0];for(const x of WORLDS){if(p>=x.startPct)w=x;}return w;};
+
+// ── RENDER ──────────────────────────────────────
+const fmtT=m=>m<60?`${m} min`:(r=>r?`${Math.floor(m/60)}h${r}min`:`${Math.floor(m/60)}h`)(m%60);
+const nTurbos=m=>Math.ceil(m/30);
+const sortD=a=>[...a].sort((a,b)=>diff(a)-diff(b));
+const grpUrg=tasks=>{const g={fire:[],soon:[],ok:[],past:[]};tasks.forEach(t=>g[urg(diff(t))].push(t));return g;};
+const GL={fire:{emoji:'🔥',text:'URGENTE — Esta semana',cls:'fire'},
+  soon:{emoji:'📅',text:'EM BREVE',cls:'soon'},
+  ok:{emoji:'🟢',text:'COM CALMA',cls:'ok'},
+  past:{emoji:'⚠️',text:'ATRASADO — Falar com professor',cls:'past'}};
+
+function renderCard(t){
+  const done=!!S.done[t.id],d=diff(t),u=urg(d),ul=urgLbl(u,d),a=ac(t.disc);
+  return `<div class="task-card ${done?'done':''} ${u==='fire'&&!done?'fire-card':''}"
+    id="card-${t.id}" style="--accent:${a.c};--accent-bg:${a.bg}">
+    <div class="task-header" onclick="toggleCard('${t.id}')">
+      <div class="checkbox ${done?'checked':''}" onclick="toggleDone(event,'${t.id}',${t.xp})">${done?'✓':''}</div>
+      <div class="task-info">
+        <div class="task-title">${t.titulo}</div>
+        <div class="task-meta">
+          <span class="badge">${t.disc}</span>
+          <span class="date-chip ${ul.cls}">${ul.text}</span>
+          <span class="time-b">⏱ ${fmtT(t.mins)}</span>
+          <span class="xp-b">+${t.xp} XP</span>
+          <button class="edit-date-btn" onclick="openEditDate(event,'${t.id}')">📅 ${fmtD(effDate(t))}</button>
+        </div>
+      </div>
+      <div class="expand-icon">▼</div>
+    </div>
+    <div class="task-body">
+      <div class="body-label">O que é</div>
+      <p class="body-text">${t.conteudo}</p>
+      <div class="body-label" style="margin-top:10px">Passo a passo</div>
+      <ul class="step-list">${t.passos.map((p,i)=>`<li class="step-item"><span class="step-num">${i+1}</span>${p}</li>`).join('')}</ul>
+      <div class="body-label" style="margin-top:10px">Formato da avaliação</div>
+      <p class="body-text" style="color:var(--muted)">${t.formato}</p>
+      <div class="body-label" style="margin-top:10px">⚡ Tempo estimado</div>
+      <p class="body-text" style="color:var(--blue)">${nTurbos(t.mins)} turbo${nTurbos(t.mins)>1?'s':''} de <strong>30 min foco + 10 min livre</strong></p>
+      <button class="turbo-btn" onclick="openTurbo('${t.id}',${t.mins})">⚡ TURBO MODE · ${nTurbos(t.mins)} turbo${nTurbos(t.mins)>1?'s':''}</button>
+    </div>
+  </div>`;
+}
+
+function renderGroup(k,tasks){
+  if(!tasks.length)return'';
+  const g=GL[k];
+  return `<div class="dg-label ${g.cls}">${g.emoji} ${g.text}</div>${tasks.map(renderCard).join('')}`;
+}
+function renderList(cat){
+  const s=sortD(TASKS[cat]),g=grpUrg(s);
+  return['fire','soon','ok','past'].map(k=>renderGroup(k,g[k])).join('');
+}
+
+function renderWorldBanner(){
+  const w=curWorld(),p=totalPct();
+  const nx=WORLDS.find(x=>x.startPct>p);
+  const nxPct=nx?nx.endPct:100;
+  const fillPct=Math.min(100,Math.round((p-w.startPct)/(w.endPct-w.startPct)*100));
+  document.getElementById('worldBanner').innerHTML=`
+  <div class="world-banner" style="border-color:${w.border};background:linear-gradient(135deg,${w.color}18,${w.color}08)">
+    <h2 style="color:${w.color}">${w.emoji} ${w.name}</h2>
+    <p style="color:${w.color}">${p}% concluído${p===100?' · 🏆 GAME CLEAR!':nx?` · Próxima fase: ${nxPct}%`:''}</p>
+    <div class="wb-bar"><div class="wb-fill" style="width:${fillPct}%;background:${w.color}"></div></div>
+    <div class="wb-label" style="color:${w.color}"><span>${w.startPct}%</span><span>${w.endPct}%</span></div>
+  </div>`;
+}
+
+function renderWorlds(){
+  const all=allTasks(),total=all.length,p=totalPct();
+  let html='';
+  WORLDS.forEach((w,wi)=>{
+    const start=Math.floor(w.startPct/100*total);
+    const end=Math.floor(w.endPct/100*total);
+    const wTasks=sortD(all.slice(start,end));
+    const wDone=wTasks.filter(t=>S.done[t.id]).length;
+    const wPct=wTasks.length?Math.round(wDone/wTasks.length*100):0;
+    const locked=p<w.startPct;
+    html+=`<div class="world-section">
+      <div class="world-header" style="border-color:${w.border};background:linear-gradient(135deg,${w.color}18,${w.color}08)">
+        <h3 style="color:${w.color}">${locked?'🔒 ':w.emoji+' '}${w.name}</h3>
+        <div class="wh-sub" style="color:${w.color}">${locked?'Complete a fase anterior para desbloquear':'Fase ativa!'}</div>
+        <div class="wh-prize" style="color:${w.color}">${locked?'🔒 Recompensa bloqueada':w.prize+' — '+w.prizeInfo}</div>
+        <div class="wh-bar"><div class="wh-fill" style="width:${wPct}%;background:${w.color}"></div></div>
+        <div class="wh-label" style="color:${w.color}"><span>${wPct}% desta fase</span><span>${wDone}/${wTasks.length}</span></div>
+      </div>
+      ${locked?`<p style="color:var(--muted);font-size:.78rem;font-weight:700;padding:0 4px 10px">🔒 Avance na fase anterior para ver estas missões.</p>`
+      :`<div class="trail">${wTasks.map(t=>{const a=ac(t.disc),done=!!S.done[t.id];
+        return`<div class="trail-node"><div class="trail-dot ${done?'done':''}"></div>
+          <div class="trail-card ${done?'done':''}">
+            <h4 style="color:${done?'var(--muted)':a.c}">${t.titulo}</h4>
+            <div class="tc-meta">${t.disc} · ⏱ ${fmtT(t.mins)} · +${t.xp} XP</div>
+          </div></div>`;}).join('')}</div>`}
+    </div>`;
+  });
+  document.getElementById('worldsContainer').innerHTML=html;
+}
+
+function renderRewards(){
+  const p=totalPct();
+  const rw=[
+    {t:25,icon:'🍬',title:'FASE 1 COMPLETA',color:'#69db7c',border:'rgba(105,219,124,.4)',prize:'3 pacotes de Marshmallow 🍬',req:'Complete 25% das missões'},
+    {t:50,icon:'🍔',title:'FASE 2 COMPLETA',color:'#4dabf7',border:'rgba(77,171,247,.4)',prize:'Hambúrguer no Invictus 🍔',req:'Complete 50% das missões'},
+    {t:75,icon:'🔥',title:'FASE 3 COMPLETA',color:'#cc5de8',border:'rgba(204,93,232,.4)',prize:'Conquista especial 🔥',req:'Complete 75% das missões'},
+    {t:100,icon:'🎧',title:'GAME CLEAR!',color:'#ffd43b',border:'rgba(255,212,59,.5)',prize:'Fone JBL novo 🎧',req:'Complete 100% — sem apontamentos da escola!'},
+  ];
+  document.getElementById('rewardsContainer').innerHTML=`
+  <div style="margin-bottom:18px"><div class="reward-title">🎁 RECOMPENSAS</div>
+  <div class="reward-sub">Complete as fases e ganhe prêmios reais. Combinado com a mãe!</div></div>
+  <div class="reward-cards">${rw.map(r=>{
+    const unlocked=p>=r.t;const fill=Math.min(100,Math.round(p/r.t*100));
+    return`<div class="reward-card ${unlocked?'unlocked':''}"
+      style="border-color:${unlocked?r.border:'var(--border)'};
+             background:${unlocked?`linear-gradient(135deg,${r.color}18,${r.color}08)`:'var(--surface)'};
+             opacity:${unlocked?1:.6}">
+      <div class="rc-icon">${r.icon}</div>
+      <h3 style="color:${unlocked?r.color:'var(--muted)'}">${r.title}</h3>
+      <div class="rc-req" style="color:${r.color}">${r.req}</div>
+      <div class="rc-prize" style="color:${unlocked?r.color:'var(--muted)'}">
+        ${unlocked?'✅ DESBLOQUEADO — '+r.prize:'🔒 '+r.prize}</div>
+      <div class="rc-bar-wrap"><div class="rc-bar"><div class="rc-fill" style="width:${fill}%;background:${r.color}"></div></div>
+      <div class="rc-label" style="color:${r.color}"><span>${p}%</span><span>${r.t}%</span></div></div>
+    </div>`;}).join('')}</div>`;
+}
+
+function renderRules(){
+  const school=[
+    {icon:'📅',t:'Prazo de trabalhos',p:'Fora do prazo: <strong>–20% na nota</strong>. Aceito até <strong>7 dias depois</strong>.'},
+    {icon:'📐',t:'Listas de Mat e Física',p:'Fora do prazo: <strong>–20%</strong>. Aceito até <strong>2 dias depois</strong>.'},
+    {icon:'🏥',t:'Prova perdida',p:'Só faz 2ª chamada com <strong>atestado médico</strong> comunicado à orientação.'},
+    {icon:'⚠️',t:'Falta sem justificativa',p:'Sem comunicação dos pais: vai <strong>direto para recuperação</strong>.'},
+    {icon:'📊',t:'Como é a média',p:'Soma e divide simples. Ex: <strong>(P1+P2+TD+TB) ÷ 3</strong>'},
+    {icon:'🔄',t:'Recuperação',p:'<strong>Obrigatória</strong> se média &lt; 6,0. Nota da recuperação substitui se for maior.'},
+  ];
+  const game=[
+    {icon:'🎮',t:'Regra nº 1 — Zero faltas de tarefa',p:'<strong>Apontamento da escola por tarefa não feita = recompensa da fase pausada</strong> até resolver com o professor. O fone JBL exige zero apontamentos no bimestre.'},
+    {icon:'⚡',t:'Regra nº 2 — Turbo Mode',p:'Cada Turbo = <strong>30 min de foco + 10 min livres</strong>. O tempo livre é 100% seu — jogo, celular, o que quiser.'},
+    {icon:'🤝',t:'Regra nº 3 — Honestidade',p:'Marcar missão como concluída <strong>sem ter feito</strong> cancela a recompensa da fase. O game só funciona de verdade.'},
+    {icon:'🍬',t:'Fase 1 — 25% concluído',p:'Recompensa: <strong>3 pacotes de Marshmallow</strong>. Combinado com a mãe!'},
+    {icon:'🍔',t:'Fase 2 — 50% concluído',p:'Recompensa: <strong>Hambúrguer no Invictus</strong>. Você escolhe o dia!'},
+    {icon:'🔥',t:'Fase 3 — 75% concluído',p:'Recompensa: <strong>conquista especial</strong> — combinado com a mãe.'},
+    {icon:'🎧',t:'GAME CLEAR — 100%',p:'Recompensa máxima: <strong>Fone JBL novo</strong>. Exige 100% das missões + zero apontamentos da escola no bimestre.'},
+    {icon:'📅',t:'Datas podem mudar',p:'Se uma data mudar, basta clicar no botão 📅 do card e atualizar. O game acompanha automaticamente.'},
+  ];
+  document.getElementById('rulesContainer').innerHTML=`
+  <div class="rules-sec-title">🏫 Regras da escola</div>
+  <div class="rules-grid">${school.map(r=>`<div class="rule-card"><div class="ri">${r.icon}</div><h3>${r.t}</h3><p>${r.p}</p></div>`).join('')}</div>
+  <div class="rules-sec-title" style="margin-top:22px">🎮 Regras do game</div>
+  <div class="rules-grid">${game.map(r=>`<div class="rule-card" style="border-color:rgba(255,212,59,.13)"><div class="ri">${r.icon}</div><h3>${r.t}</h3><p>${r.p}</p></div>`).join('')}</div>`;
+}
+
+function updateHUD(){
+  const lv=curLvl(),nx=nxtLvl();
+  const xpIn=S.xp-lv.min,xpTo=nx?nx.min-lv.min:1;
+  const pct=nx?Math.min(100,Math.round(xpIn/xpTo*100)):100;
+  document.getElementById('xpDisplay').textContent=S.xp+' XP';
+  document.getElementById('levelDisplay').textContent=`LVL ${lv.lvl} · ${lv.name}`;
+  document.getElementById('xpFill').style.width=pct+'%';
+  document.getElementById('xpPct').textContent=pct+'%';
+  document.getElementById('doneDisplay').textContent=`${Object.values(S.done).filter(Boolean).length} missões`;
+}
+
+function fullRender(){
+  updateHUD();renderWorldBanner();
+  document.getElementById('list-provas').innerHTML=renderList('provas');
+  document.getElementById('list-trabalhos').innerHTML=renderList('trabalhos');
+  document.getElementById('list-diario').innerHTML=renderList('diario');
+  renderWorlds();renderRewards();renderRules();
+}
+
+// ── MOM VIEW ──────────────────────────────────
+function renderMom(){
+  const all=allTasks(),p=totalPct(),w=curWorld();
+  const done=all.filter(t=>S.done[t.id]);
+  const pend=all.filter(t=>!S.done[t.id]);
+  const urgent=pend.filter(t=>{const d=diff(t);return d>=0&&d<=3;});
+  const late=pend.filter(t=>diff(t)<0);
+  document.getElementById('momContent').innerHTML=`
+  <div class="mom-hdr"><div class="mhi">👩</div>
+    <div><h2>Painel da Mãe</h2><p><span class="sync-dot"></span>Tempo real · ${new Date().toLocaleString('pt-BR')}</p></div>
+  </div>
+  <div class="mom-overview">
+    <div class="mom-stat"><div class="ms-num" style="color:var(--xp)">${S.xp}</div><div class="ms-label">XP total</div></div>
+    <div class="mom-stat"><div class="ms-num" style="color:var(--green)">${done.length}</div><div class="ms-label">Concluídas</div></div>
+    <div class="mom-stat"><div class="ms-num" style="color:var(--orange)">${pend.length}</div><div class="ms-label">Pendentes</div></div>
+    <div class="mom-stat"><div class="ms-num" style="color:var(--red)">${late.length}</div><div class="ms-label">Atrasadas</div></div>
+    <div class="mom-stat"><div class="ms-num" style="color:${w.color}">${p}%</div><div class="ms-label">Progresso</div></div>
+    <div class="mom-stat"><div class="ms-num" style="color:var(--purple)">${curLvl().lvl}</div><div class="ms-label">Level</div></div>
+  </div>
+  <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:13px;padding:13px 15px;margin-bottom:14px">
+    <div style="font-size:.67rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px">Fase atual</div>
+    <div style="font-family:'Bangers',cursive;font-size:1.05rem;letter-spacing:1px;color:${w.color}">${w.emoji} ${w.name}</div>
+    <div style="font-size:.73rem;font-weight:700;color:${w.color};margin-top:2px">${w.prize} · ${w.prizeInfo}</div>
+    <div style="height:7px;border-radius:99px;background:var(--surface2);overflow:hidden;margin-top:7px">
+      <div style="height:100%;width:${p}%;background:${w.color};border-radius:99px;transition:width .8s"></div></div>
+    <div style="font-size:.62rem;font-weight:800;color:${w.color};margin-top:2px;font-family:'Space Mono',monospace">${p}%</div>
+  </div>
+  ${urgent.length?`<div class="mom-sec">🔥 Atenção — prazo nos próximos 3 dias</div>
+  ${urgent.map(t=>{const d=diff(t),a=ac(t.disc);return`<div class="mom-row fire-row">
+    <div class="mdot" style="background:${a.c}"></div>
+    <div class="mom-ti"><div class="mom-tt">${t.titulo}</div><div class="mom-tm">${t.disc} · ${d===0?'HOJE':d===1?'Amanhã':`${d}d`}</div></div>
+    <div class="mom-status ms-fire">🔥</div></div>`;}).join('')}`:''}
+  ${late.length?`<div class="mom-sec">⚠️ Atrasadas</div>
+  ${late.map(t=>{const a=ac(t.disc);return`<div class="mom-row">
+    <div class="mdot" style="background:var(--muted)"></div>
+    <div class="mom-ti"><div class="mom-tt">${t.titulo}</div><div class="mom-tm">${t.disc} · ${Math.abs(diff(t))}d atrasado</div></div>
+    <div class="mom-status ms-pend">⚠️</div></div>`;}).join('')}`:''}
+  <div class="mom-sec">✅ Concluídas (${done.length}/${all.length})</div>
+  ${sortD(done).map(t=>{const a=ac(t.disc);return`<div class="mom-row done">
+    <div class="mdot" style="background:${a.c}"></div>
+    <div class="mom-ti"><div class="mom-tt">${t.titulo}</div><div class="mom-tm">${t.disc} · +${t.xp} XP</div></div>
+    <div class="mom-status ms-done">✅</div></div>`;}).join('')}
+  <div class="mom-sec">📋 Pendentes (${pend.length}/${all.length})</div>
+  ${sortD(pend.filter(t=>diff(t)>=0)).map(t=>{const d=diff(t),u=urg(d),ul=urgLbl(u,d),a=ac(t.disc);return`<div class="mom-row">
+    <div class="mdot" style="background:${a.c}"></div>
+    <div class="mom-ti"><div class="mom-tt">${t.titulo}</div><div class="mom-tm">${t.disc} · ${ul.text}</div></div>
+    <div class="mom-status ms-pend">📋</div></div>`;}).join('')}`;
+}
+
+// ── INTERACTIONS ──────────────────────────────
+window.toggleCard=id=>{const c=document.getElementById('card-'+id);if(c)c.classList.toggle('open');};
+window.toggleDone=(e,id,xpVal)=>{
+  e.stopPropagation();
+  const wasLvl=curLvl().lvl;
+  const wasDone=!!S.done[id];
+  push({done:{...S.done,[id]:!wasDone},xp:Math.max(0,S.xp+(wasDone?-xpVal:xpVal))});
+  if(!wasDone)showToast(`⚡ MISSÃO COMPLETA! +${xpVal} XP`);
+  setTimeout(()=>{if(curLvl().lvl>wasLvl)showLevelUp(curLvl());},400);
+};
+
+let editId=null;
+window.openEditDate=(e,id)=>{
+  e.stopPropagation();editId=id;
+  const t=allTasks().find(x=>x.id===id);
+  document.getElementById('editTitle').textContent=t?t.titulo:'';
+  document.getElementById('editDateInput').value=effDate(t);
+  document.getElementById('editModal').style.display='flex';
+};
+window.saveEditDate=()=>{
+  const v=document.getElementById('editDateInput').value;
+  if(!v||!editId)return;
+  push({customDates:{...S.customDates,[editId]:v}});
+  window.closeEditModal();showToast('📅 Data atualizada!');
+};
+window.closeEditModal=()=>{document.getElementById('editModal').style.display='none';editId=null;};
+
+window.showTab=(name,btn)=>{
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');btn.classList.add('active');
+};
+window.setMode=m=>{
+  mode=m;
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('playerView').style.display=m==='player'?'block':'none';
+  document.getElementById('momView').style.display=m==='mom'?'block':'none';
+  if(m==='player'){fullRender();checkAlerts();}else renderMom();
+};
+
+let toastT;
+function showToast(msg){
+  const o=document.getElementById('toastEl');if(o)o.remove();clearTimeout(toastT);
+  const el=document.createElement('div');el.className='toast';el.id='toastEl';el.textContent=msg;
+  document.body.appendChild(el);toastT=setTimeout(()=>el.remove(),3000);
+}
+function showLevelUp(lv){
+  const el=document.createElement('div');el.className='levelup-ov';
+  el.innerHTML=`<div class="levelup-box"><div class="stars">⭐⭐⭐</div>
+    <h1>LEVEL UP!</h1><div class="lv-name">LVL ${lv.lvl} · ${lv.name}</div>
+    <p style="color:var(--muted);margin-top:7px">Continue avançando!</p>
+    <button class="lv-dismiss" onclick="this.closest('.levelup-ov').remove()">🎮 CONTINUAR</button>
+  </div>`;
+  document.body.appendChild(el);
+}
+
+// ── TURBO MODE ──────────────────────────────────
+const TURBO=30*60,REST=10*60,CIRC=2*Math.PI*63;
+let pm={active:false,isRest:false,secs:TURBO,rounds:0,interval:null,taskMins:30};
+window.openTurbo=(id,mins)=>{
+  pm={active:false,isRest:false,secs:TURBO,rounds:0,interval:null,taskMins:mins};
+  clearInterval(pm.interval);
+  document.getElementById('startBtn').textContent='▶ INICIAR';
+  document.getElementById('rewardMsg').textContent='';
+  updateTurboUI();document.getElementById('turboModal').style.display='flex';
+};
+window.closeModal=()=>{clearInterval(pm.interval);pm.active=false;document.getElementById('turboModal').style.display='none';};
+window.toggleTimer=()=>{
+  if(pm.active){clearInterval(pm.interval);pm.active=false;document.getElementById('startBtn').textContent='▶ CONTINUAR';}
+  else{pm.active=true;document.getElementById('startBtn').textContent='⏸ PAUSAR';pm.interval=setInterval(tickTurbo,1000);}
+};
+window.skipPhase=()=>{
+  if(!pm.isRest){pm.rounds++;pm.isRest=true;pm.secs=REST;}else{pm.isRest=false;pm.secs=TURBO;}
+  updateTurboUI();
+};
+function tickTurbo(){
+  pm.secs--;
+  if(pm.secs<=0){
+    if(!pm.isRest){pm.rounds++;pm.isRest=true;pm.secs=REST;
+      document.getElementById('rewardMsg').textContent='🎮 30 min feitos! 10 min livres — você ganhou!';playBeep();}
+    else{pm.isRest=false;pm.secs=TURBO;document.getElementById('rewardMsg').textContent='';}
+  }
+  updateTurboUI();
+}
+function updateTurboUI(){
+  const total=pm.isRest?REST:TURBO;
+  document.getElementById('timerDisplay').textContent=`${String(Math.floor(pm.secs/60)).padStart(2,'0')}:${String(pm.secs%60).padStart(2,'0')}`;
+  document.getElementById('timerSub').textContent=pm.isRest?'RECARREGANDO 🎮':'TURBO ⚡';
+  document.getElementById('modeLabel').textContent=pm.isRest?'MODO RECHARGE':'MODO TURBO';
+  document.getElementById('modeLabel').className='mode-label '+(pm.isRest?'recharge':'turbo');
+  const offset=CIRC*(1-pm.secs/total);
+  const ring=document.getElementById('ringFill');
+  ring.style.strokeDashoffset=offset;ring.className='ring-fill '+(pm.isRest?'recharge':'turbo');
+  const tot=nTurbos(pm.taskMins);
+  document.getElementById('pomoBlocks').innerHTML=Array.from({length:tot},(_,i)=>
+    `<div class="pomo-block ${i<pm.rounds?'turbo-done':''}"></div>`).join('');
+  const rem=Math.max(0,tot-pm.rounds);
+  document.getElementById('phaseInfo').innerHTML=pm.isRest
+    ?`<strong style="color:var(--green)">🎮 Tempo livre!</strong> Use como quiser.`
+    :`<strong style="color:var(--blue)">${rem} turbo${rem!==1?'s':''} restante${rem!==1?'s':''}</strong><br>30 min foco → 10 min seus`;
+}
+function playBeep(){
+  try{const ctx=new AudioContext(),o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);o.frequency.value=880;
+    g.gain.setValueAtTime(.3,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.6);
+    o.start();o.stop(ctx.currentTime+.6);}catch(e){}
+}
+</script>
+</body>
+</html>
